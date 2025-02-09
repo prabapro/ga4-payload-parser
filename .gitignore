@@ -1,0 +1,49 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+# Node
+node_modules
+
+# Environment Variables
+.env
+*.env
+.env.*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Tests
+!src/test
+test-results
+
+# Dev Directories
+dist
+.firebase
+exported-dev-data
+
+# Dev Files
+firestore.rules
+
+# Excluded files
+!.env.vault
+!*.code-workspace
+
+# Excluded directories
+!public
+.env*
+.flaskenv*
+!.env.project
