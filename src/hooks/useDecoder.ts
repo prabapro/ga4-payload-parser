@@ -49,7 +49,9 @@ export function useDecoder() {
               }
             }
           } catch (e) {
-            console.log('Base64 decoding attempt failed, using original parameters');
+            console.log(
+              'Base64 decoding attempt failed, using original parameters',
+            );
           }
         }
       }

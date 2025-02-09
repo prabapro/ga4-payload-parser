@@ -10,7 +10,10 @@ export interface HistoryItem {
 const MAX_HISTORY_ITEMS = 10;
 
 export function useHistory() {
-  const [history, setHistory] = useLocalStorage<HistoryItem[]>('ga4-decoder-history', []);
+  const [history, setHistory] = useLocalStorage<HistoryItem[]>(
+    'ga4-decoder-history',
+    [],
+  );
 
   const addToHistory = (payload: string) => {
     const newItem: HistoryItem = {
