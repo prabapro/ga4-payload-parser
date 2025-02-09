@@ -1,15 +1,12 @@
 // src/App.tsx
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Search } from 'lucide-react';
-
-interface DecodedData {
-  en?: string;
-  dl?: string;
-  [key: string]: unknown;
-}
+import { Layout } from '@/components/layout/Layout';
+import { useDecoder } from '@/hooks/useDecoder';
+import { useHistory } from '@/hooks/useHistory';
+import type { DecodedData } from '@/hooks/useDecoder';
 
 interface HighlightedInfoProps {
   data: DecodedData;
@@ -44,101 +41,20 @@ const HighlightedInfo: React.FC<HighlightedInfoProps> = ({ data }) => {
 
 const App: React.FC = () => {
   const [input, setInput] = useState<string>('');
-  const [decodedData, setDecodedData] = useState<DecodedData | null>(null);
-  const [error, setError] = useState<string>('');
   const [searchTerm, setSearchTerm] = useState<string>('');
-
-  const extractQueryString = (input: string): string => {
-    try {
-      if (input.includes('http')) {
-        const url = new URL(input);
-        return url.search.slice(1);
-      }
-      return input;
-    } catch (err) {
-      throw new Error('Invalid URL format');
-    }
-  };
-
-  const decodePayload = (payload: string): DecodedData => {
-    try {
-      const queryString = extractQueryString(payload);
-      let params: URLSearchParams;
-
-      // First try to parse as regular URL parameters
-      params = new URLSearchParams(queryString);
-
-      // Check if this might be an encoded payload:
-      // 1. If there's only one parameter
-      // 2. Its value looks like base64 (contains mostly letters, numbers, and base64 padding)
-      const entries = Array.from(params.entries());
-      if (entries.length === 1) {
-        const [, value] = entries[0];
-        const base64Regex = /^[A-Za-z0-9+/=_-]*$/;
-
-        if (base64Regex.test(value)) {
-          try {
-            // Attempt base64 decoding
-            const urlDecoded = decodeURIComponent(value);
-            const base64Decoded = atob(urlDecoded);
-
-            // Check if the decoded result looks like a query string
-            if (base64Decoded.includes('=') && !base64Decoded.includes(';')) {
-              const decodedParams = new URLSearchParams(base64Decoded);
-              if (!decodedParams.entries().next().done) {
-                params = decodedParams;
-              }
-            }
-          } catch (e) {
-            // If base64 decoding fails, use the original params
-            console.log(
-              'Base64 decoding attempt failed, using original parameters',
-            );
-          }
-        }
-      }
-
-      const paramObject: DecodedData = {};
-      params.forEach((value, key) => {
-        if (key.includes('.')) {
-          const parts = key.split('.');
-          let current: Record<string, any> = paramObject;
-          for (let i = 0; i < parts.length - 1; i++) {
-            if (!isNaN(Number(parts[i]))) {
-              const parentKey = parts[i - 1];
-              current[parentKey] = current[parentKey] || [];
-              if (!current[parentKey][parseInt(parts[i])]) {
-                current[parentKey][parseInt(parts[i])] = {};
-              }
-              current = current[parentKey][parseInt(parts[i])];
-            } else {
-              current[parts[i]] = current[parts[i]] || {};
-              current = current[parts[i]];
-            }
-          }
-          current[parts[parts.length - 1]] = value;
-        } else {
-          paramObject[key] = value;
-        }
-      });
-
-      return paramObject;
-    } catch (err) {
-      const error = err as Error;
-      throw new Error(`Invalid encoded payload: ${error.message}`);
-    }
-  };
+  const { decodedData, error, decode } = useDecoder();
+  const { history, addToHistory, removeFromHistory } = useHistory();
 
   const handleDecode = (): void => {
-    try {
-      const decoded = decodePayload(input);
-      setDecodedData(decoded);
-      setError('');
-    } catch (err) {
-      const error = err as Error;
-      setError(error.message);
-      setDecodedData(null);
+    const decoded = decode(input);
+    if (decoded) {
+      addToHistory(input);
     }
+  };
+
+  const handleHistorySelect = (payload: string) => {
+    setInput(payload);
+    decode(payload);
   };
 
   const renderValue = (value: unknown): React.ReactNode => {
@@ -204,53 +120,60 @@ const App: React.FC = () => {
   };
 
   return (
-    <Card className="w-full max-w-4xl">
-      <CardHeader>
-        <CardTitle>URL and Base64 Decoder</CardTitle>
-      </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
-          <div>
-            <textarea
-              className="w-full p-2 border rounded-md min-h-24"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Paste your encoded URL or query string here..."
-            />
-          </div>
-
-          <Button variant="default" onClick={handleDecode}>
-            Decode
-          </Button>
-
-          {error && <div className="text-red-500 mt-2">{error}</div>}
-
-          {decodedData && (
-            <div className="mt-4">
-              <HighlightedInfo data={decodedData} />
-
-              <div className="mb-4 relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                  <Search className="h-5 w-5 text-gray-400" />
-                </div>
-                <input
-                  type="text"
-                  className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
-                  placeholder="Search parameters..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                />
-              </div>
-
-              <div className="bg-white rounded-lg">
-                <h3 className="text-lg font-semibold mb-2">All Parameters:</h3>
-                {renderObject(decodedData, true)}
-              </div>
+    <Layout
+      history={history}
+      onHistorySelect={handleHistorySelect}
+      onHistoryDelete={removeFromHistory}>
+      <Card>
+        <CardHeader>
+          <CardTitle>Decode GA4 Payload</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            <div>
+              <textarea
+                className="w-full p-2 border rounded-md min-h-24"
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Paste your encoded URL or query string here..."
+              />
             </div>
-          )}
-        </div>
-      </CardContent>
-    </Card>
+
+            <Button variant="default" onClick={handleDecode}>
+              Decode
+            </Button>
+
+            {error && <div className="text-red-500 mt-2">{error}</div>}
+
+            {decodedData && (
+              <div className="mt-4">
+                <HighlightedInfo data={decodedData} />
+
+                <div className="mb-4 relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Search className="h-5 w-5 text-gray-400" />
+                  </div>
+                  <input
+                    type="text"
+                    className="block w-full pl-10 pr-3 py-2 border border-gray-300 rounded-md leading-5 bg-white placeholder-gray-500 focus:outline-none focus:ring-blue-500 focus:border-blue-500"
+                    placeholder="Search parameters..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
+                </div>
+
+                <div className="bg-white rounded-lg">
+                  <h3 className="text-lg font-semibold mb-2">
+                    All Parameters:
+                  </h3>
+                  {renderObject(decodedData, true)}
+                </div>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </Layout>
   );
 };
 
