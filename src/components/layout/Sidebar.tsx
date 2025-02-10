@@ -125,7 +125,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     return (
                       <div
                         key={item.id}
-                        className="group relative bg-muted/40 hover:bg-muted/80 rounded-lg p-3 transition-colors">
+                        className="group relative bg-muted/60 hover:bg-muted/90 rounded-lg p-3 transition-colors">
                         <Button
                           variant="ghost"
                           className="w-full h-auto p-0 flex flex-col items-start gap-1 font-normal"
