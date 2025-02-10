@@ -1,4 +1,5 @@
 // src/components/layout/Sidebar.tsx
+
 import React, { useState } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
@@ -21,8 +22,22 @@ export const Sidebar: React.FC<SidebarProps> = ({
   onSelect,
   onDelete,
 }) => {
-  // Default to closed on mobile, open on desktop
-  const [isOpen, setIsOpen] = useState(window.innerWidth >= 768);
+  const [isOpen, setIsOpen] = useState(false);
+
+  React.useEffect(() => {
+    const checkWidth = () => {
+      setIsOpen(window.innerWidth >= 768);
+    };
+
+    // Set initial state
+    checkWidth();
+
+    // Add listener for window resize
+    window.addEventListener('resize', checkWidth);
+
+    // Cleanup
+    return () => window.removeEventListener('resize', checkWidth);
+  }, []);
 
   return (
     <>
@@ -42,12 +57,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar Container */}
       <aside
         className={`
-          fixed md:relative
-          inset-y-0 left-0
+          fixed md:sticky
+          top-0 md:top-auto
+          h-full md:h-[calc(100vh-8rem)]
           z-40
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0 w-64' : '-translate-x-full md:translate-x-0 w-0 md:w-16'}
           bg-background border-r
+          overflow-hidden
         `}>
         {/* Desktop Toggle Button */}
         <Button
@@ -67,12 +84,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
         <div
           className={`
           ${!isOpen && 'invisible md:visible'}
-          space-y-4 py-4 w-64
+          h-full w-64
           ${!isOpen && 'md:hidden'}
         `}>
-          <div className="px-3 py-2">
+          <div className="px-3 py-2 h-full">
             <h2 className="mb-2 px-4 text-lg font-semibold">History</h2>
-            <ScrollArea className="h-[calc(100vh-12rem)]">
+            <ScrollArea className="h-[calc(100%-3rem)]">
               {history.length === 0 ? (
                 <div className="px-4 py-2 text-sm text-muted-foreground">
                   No history yet
