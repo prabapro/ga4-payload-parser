@@ -1,4 +1,5 @@
 // src/App.tsx
+
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
@@ -9,6 +10,7 @@ import {
   HighlightedInfo,
   ParamsViewer,
 } from '@/components/features/decoder';
+import InfoComponent from '@/components/features/InfoComponent.tsx';
 
 const App: React.FC = () => {
   const [input, setInput] = useState<string>('');
@@ -27,14 +29,20 @@ const App: React.FC = () => {
     decode(payload);
   };
 
+  const handleLoadSample = (payload: string) => {
+    setInput(payload);
+    decode(payload);
+  };
+
   return (
     <Layout
       history={history}
       onHistorySelect={handleHistorySelect}
       onHistoryDelete={removeFromHistory}>
+      <InfoComponent onLoadSample={handleLoadSample} />
       <Card>
         <CardHeader>
-          <CardTitle>Decode GA4 Payload</CardTitle>
+          <CardTitle>GA4 Payload</CardTitle>
         </CardHeader>
         <CardContent>
           <div className="space-y-6">

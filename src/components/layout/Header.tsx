@@ -8,7 +8,9 @@ export const Header: React.FC = () => {
       <div className="flex h-16 items-center px-4">
         <div className="flex items-center gap-4">
           <Terminal className="h-8 w-8" />
-          <h1 className="text-xl font-semibold">GA4 Payload Parser</h1>
+          <h1 className="text-xl font-semibold">
+            <a href="/">GA4 Payload Parser</a>
+          </h1>
         </div>
       </div>
     </header>
