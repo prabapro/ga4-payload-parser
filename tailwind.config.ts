@@ -1,3 +1,5 @@
+// tailwind.config.js
+
 import tailwindAnimate from 'tailwindcss-animate';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import type { Config } from 'tailwindcss';
