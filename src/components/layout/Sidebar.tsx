@@ -7,7 +7,7 @@ import {
   Trash2,
   PanelLeftClose,
   PanelLeft,
-  Activity,
+  FileCode2,
   Globe,
 } from 'lucide-react';
 import type { HistoryItem } from '@/hooks/useHistory';
@@ -127,7 +127,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           className="w-full h-auto p-0 flex flex-col items-start gap-1 font-normal"
                           onClick={() => onSelect(item.payload)}>
                           <div className="flex items-center gap-2 text-sm font-medium">
-                            <Activity className="h-4 w-4 text-primary" />
+                            <FileCode2 className="h-4 w-4" />
                             {item.eventName}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
@@ -135,7 +135,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             {domain}
                           </div>
                           <div className="text-xs text-muted-foreground mt-1">
-                            {new Date(item.timestamp).toLocaleString()}
+                            {new Date(item.timestamp).toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false,
+                            })}
                           </div>
                         </Button>
 
@@ -158,7 +166,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Sidebar Content - Minimized View */}
         <div
           className={`
-          hidden md:flex flex-col items-center pt-16 space-y-4
+          hidden md:flex flex-col items-center pt-24 space-y-6
           ${isOpen && 'md:hidden'}
         `}>
           {history.map((item) => (
@@ -169,7 +177,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="w-10 h-10"
               onClick={() => onSelect(item.payload)}
               title={item.eventName}>
-              <Activity className="h-4 w-4" />
+              <FileCode2 className="h-4 w-4" />
             </Button>
           ))}
         </div>
