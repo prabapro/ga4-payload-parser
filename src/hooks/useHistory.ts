@@ -21,11 +21,12 @@ export function useHistory() {
 
   const extractDecodedInfo = (payload: string) => {
     const decodedData = decode(payload);
-    if (!decodedData) return { eventName: 'Unknown Event', pageLocation: 'Unknown Page' };
+    if (!decodedData)
+      return { eventName: 'Unknown Event', pageLocation: 'Unknown Page' };
 
     return {
       eventName: decodedData.en || 'Unknown Event',
-      pageLocation: decodedData.dl || 'Unknown Page'
+      pageLocation: decodedData.dl || 'Unknown Page',
     };
   };
 
