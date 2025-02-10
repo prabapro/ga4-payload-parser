@@ -3,7 +3,7 @@ import React from 'react';
 
 export const Footer: React.FC = () => {
   return (
-    <footer className="border-t py-4 px-6">
+    <footer className="border-t py-4 px-6  border-gray-100 bg-white">
       <div className="flex justify-between items-center">
         <p className="text-sm text-muted-foreground">
           Made with ❤️ by{' '}
