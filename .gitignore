@@ -47,3 +47,4 @@ firestore.rules
 .env*
 .flaskenv*
 !.env.project
+.replit
