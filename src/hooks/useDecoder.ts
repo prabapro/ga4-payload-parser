@@ -105,5 +105,7 @@ export function useDecoder() {
     decodedData,
     error,
     decode,
+    setDecodedData,
+    setError,
   };
 }

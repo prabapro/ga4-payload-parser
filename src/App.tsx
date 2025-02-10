@@ -1,5 +1,4 @@
 // src/App.tsx
-
 import React, { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
@@ -10,11 +9,11 @@ import {
   HighlightedInfo,
   ParamsViewer,
 } from '@/components/features/decoder';
-import InfoComponent from '@/components/features/InfoComponent.tsx';
+import InfoComponent from '@/components/features/InfoComponent';
 
 const App: React.FC = () => {
   const [input, setInput] = useState<string>('');
-  const { decodedData, error, decode } = useDecoder();
+  const { decodedData, error, decode, setDecodedData, setError } = useDecoder();
   const { history, addToHistory, removeFromHistory } = useHistory();
 
   const handleDecode = (): void => {
@@ -34,6 +33,11 @@ const App: React.FC = () => {
     decode(payload);
   };
 
+  const handleClear = () => {
+    setDecodedData(null);
+    setError('');
+  };
+
   return (
     <Layout
       history={history}
@@ -50,6 +54,7 @@ const App: React.FC = () => {
               value={input}
               onChange={setInput}
               onDecode={handleDecode}
+              onClear={handleClear}
               error={error}
             />
 

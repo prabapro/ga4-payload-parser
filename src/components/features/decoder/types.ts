@@ -5,6 +5,7 @@ export interface DecoderInputProps {
   value: string;
   onChange: (value: string) => void;
   onDecode: () => void;
+  onClear: () => void;
   error?: string;
 }
 
