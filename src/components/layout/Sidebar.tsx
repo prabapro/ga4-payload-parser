@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import {
   Clock,
   Trash2,
@@ -11,6 +12,7 @@ import {
   Globe,
   CalendarClock,
 } from 'lucide-react';
+import { isEcommerceEvent } from '@/lib/utils';
 import type { HistoryItem } from '@/hooks/useHistory';
 
 interface SidebarProps {
@@ -118,18 +120,28 @@ export const Sidebar: React.FC<SidebarProps> = ({
                     const domain = item.pageLocation
                       ? getDomainFromUrl(item.pageLocation)
                       : 'Unknown Domain';
+                    const isEcom = isEcommerceEvent(item.eventName);
 
                     return (
                       <div
                         key={item.id}
-                        className="group relative bg-muted/40 hover:bg-muted/80 rounded-lg p-3 transition-colors">
+                        className="group relative bg-muted/60 hover:bg-muted/90 rounded-lg p-3 transition-colors">
                         <Button
                           variant="ghost"
                           className="w-full h-auto p-0 flex flex-col items-start gap-1 font-normal"
                           onClick={() => onSelect(item.payload)}>
                           <div className="flex items-center gap-2 text-sm font-medium">
                             <FileCode2 className="h-3 w-3 text-zinc-300" />
-                            {item.eventName}
+                            <div className="flex items-center gap-2">
+                              <span>{item.eventName}</span>
+                              {isEcom && (
+                                <Badge
+                                  variant="outline"
+                                  className="h-5 text-[10px] bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
+                                  ecom event
+                                </Badge>
+                              )}
+                            </div>
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <Globe className="h-3 w-3 text-zinc-300" />
@@ -178,7 +190,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               size="icon"
               className="w-10 h-10"
               onClick={() => onSelect(item.payload)}
-              title={item.eventName}>
+              title={`${item.eventName}${isEcommerceEvent(item.eventName) ? ' (ecom)' : ''}`}>
               <FileCode2 className="h-4 w-4" />
             </Button>
           ))}
