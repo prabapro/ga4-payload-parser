@@ -59,12 +59,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <Button
         variant="ghost"
         size="icon"
-        className="fixed bottom-4 right-4 h-10 w-10 rounded-full shadow-lg md:hidden z-50"
+        className="fixed top-5 right-4 h-6 w-6 md:hidden z-50 "
         onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? (
-          <PanelLeftClose className="h-4 w-4" />
+          <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
         ) : (
-          <PanelLeft className="h-4 w-4" />
+          <PanelLeft className="h-4 w-4 text-muted-foreground" />
         )}
       </Button>
 
