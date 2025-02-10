@@ -77,14 +77,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           z-40
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0 w-80' : '-translate-x-full md:translate-x-0 w-0 md:w-16'}
-          bg-background border-r
+          bg-background border-r border-muted
           overflow-hidden
         `}>
         {/* Desktop Toggle Button */}
         <Button
           variant="ghost"
           size="icon"
-          className={`absolute right-2 top-2 hidden md:flex
+          className={`absolute right-2 top-6 hidden md:flex text-zinc-400
             ${!isOpen && 'left-2 right-auto'}`}
           onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (
@@ -101,15 +101,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           h-full w-80
           ${!isOpen && 'md:hidden'}
         `}>
-          <div className="px-4 py-4 h-full">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              History
+          <div className="px-4 py-4 h-full mt-4">
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2 text-zinc-500">
+              <Clock className="h-5 w-5 text-zinc-500" />
+              Recent Payloads
             </h2>
             <ScrollArea className="h-[calc(100%-3rem)]">
               {history.length === 0 ? (
-                <div className="py-4 text-sm text-muted-foreground">
-                  No history yet
+                <div className="py-4 text-xs text-muted-foreground">
+                  Nothing here yet...
                 </div>
               ) : (
                 <div className="space-y-3">
