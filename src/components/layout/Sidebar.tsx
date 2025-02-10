@@ -9,6 +9,7 @@ import {
   PanelLeft,
   FileCode2,
   Globe,
+  CalendarClock,
 } from 'lucide-react';
 import type { HistoryItem } from '@/hooks/useHistory';
 
@@ -127,14 +128,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           className="w-full h-auto p-0 flex flex-col items-start gap-1 font-normal"
                           onClick={() => onSelect(item.payload)}>
                           <div className="flex items-center gap-2 text-sm font-medium">
-                            <FileCode2 className="h-4 w-4" />
+                            <FileCode2 className="h-3 w-3 text-zinc-300" />
                             {item.eventName}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Globe className="h-3 w-3" />
+                            <Globe className="h-3 w-3 text-zinc-300" />
                             {domain}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <CalendarClock className="h-3 w-3 text-zinc-300" />
                             {new Date(item.timestamp).toLocaleString('en-US', {
                               year: 'numeric',
                               month: 'short',
