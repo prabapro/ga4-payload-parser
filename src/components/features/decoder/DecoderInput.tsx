@@ -21,7 +21,7 @@ export const DecoderInput: React.FC<DecoderInputProps> = ({
         value={value}
         onChange={(e) => onChange(e.target.value)}
         placeholder="Paste your encoded URL or query string here..."
-        className="min-h-24"
+        className="min-h-36"
       />
       <div className="flex items-center gap-3">
         <Button

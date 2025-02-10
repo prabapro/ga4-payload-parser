@@ -24,10 +24,12 @@ const getDomainFromUrl = (url: string) => {
     const urlObj = new URL(decodeURIComponent(url));
     return urlObj.hostname;
   } catch (e) {
+    console.error(e);
     try {
       // If that fails, try prepending http://
       return new URL('http://' + url).hostname;
     } catch (e) {
+      console.error(e);
       // If all parsing fails, return the original string
       return url;
     }

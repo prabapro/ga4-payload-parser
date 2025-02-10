@@ -43,13 +43,8 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
                   rel="noopener noreferrer"
                   className="underline hover:text-primary">
                   Stape Server GTM Shopify App
-                </a>{' '}
+                </a>
                 .
-              </p>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Simply paste your GA4 payload URL or query string below - this
-                tool will automatically detect the encoding format and display
-                the decoded parameters in an organized, searchable view.
               </p>
             </div>
 
