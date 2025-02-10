@@ -7,8 +7,9 @@ import {
   Trash2,
   PanelLeftClose,
   PanelLeft,
-  Activity,
+  FileCode2,
   Globe,
+  CalendarClock,
 } from 'lucide-react';
 import type { HistoryItem } from '@/hooks/useHistory';
 
@@ -59,12 +60,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <Button
         variant="ghost"
         size="icon"
-        className="fixed bottom-4 right-4 h-10 w-10 rounded-full shadow-lg md:hidden z-50"
+        className="fixed top-5 right-4 h-6 w-6 md:hidden z-50 "
         onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? (
-          <PanelLeftClose className="h-4 w-4" />
+          <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
         ) : (
-          <PanelLeft className="h-4 w-4" />
+          <PanelLeft className="h-4 w-4 text-muted-foreground" />
         )}
       </Button>
 
@@ -77,14 +78,14 @@ export const Sidebar: React.FC<SidebarProps> = ({
           z-40
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0 w-80' : '-translate-x-full md:translate-x-0 w-0 md:w-16'}
-          bg-background border-r
+          bg-background border-r border-muted
           overflow-hidden
         `}>
         {/* Desktop Toggle Button */}
         <Button
           variant="ghost"
           size="icon"
-          className={`absolute right-2 top-2 hidden md:flex
+          className={`absolute right-2 top-6 hidden md:flex text-zinc-400
             ${!isOpen && 'left-2 right-auto'}`}
           onClick={() => setIsOpen(!isOpen)}>
           {isOpen ? (
@@ -101,15 +102,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
           h-full w-80
           ${!isOpen && 'md:hidden'}
         `}>
-          <div className="px-4 py-4 h-full">
-            <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
-              <Clock className="h-5 w-5" />
-              History
+          <div className="px-4 py-4 h-full mt-4">
+            <h2 className="text-base font-semibold mb-4 flex items-center gap-2 text-zinc-500">
+              <Clock className="h-5 w-5 text-zinc-500" />
+              Recent Payloads
             </h2>
             <ScrollArea className="h-[calc(100%-3rem)]">
               {history.length === 0 ? (
-                <div className="py-4 text-sm text-muted-foreground">
-                  No history yet
+                <div className="py-4 text-xs text-muted-foreground">
+                  Nothing here yet...
                 </div>
               ) : (
                 <div className="space-y-3">
@@ -127,15 +128,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           className="w-full h-auto p-0 flex flex-col items-start gap-1 font-normal"
                           onClick={() => onSelect(item.payload)}>
                           <div className="flex items-center gap-2 text-sm font-medium">
-                            <Activity className="h-4 w-4 text-primary" />
+                            <FileCode2 className="h-3 w-3 text-zinc-300" />
                             {item.eventName}
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <Globe className="h-3 w-3" />
+                            <Globe className="h-3 w-3 text-zinc-300" />
                             {domain}
                           </div>
-                          <div className="text-xs text-muted-foreground mt-1">
-                            {new Date(item.timestamp).toLocaleString()}
+                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                            <CalendarClock className="h-3 w-3 text-zinc-300" />
+                            {new Date(item.timestamp).toLocaleString('en-US', {
+                              year: 'numeric',
+                              month: 'short',
+                              day: 'numeric',
+                              hour: '2-digit',
+                              minute: '2-digit',
+                              second: '2-digit',
+                              hour12: false,
+                            })}
                           </div>
                         </Button>
 
@@ -158,7 +168,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
         {/* Sidebar Content - Minimized View */}
         <div
           className={`
-          hidden md:flex flex-col items-center pt-16 space-y-4
+          hidden md:flex flex-col items-center pt-24 space-y-6
           ${isOpen && 'md:hidden'}
         `}>
           {history.map((item) => (
@@ -169,7 +179,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
               className="w-10 h-10"
               onClick={() => onSelect(item.payload)}
               title={item.eventName}>
-              <Activity className="h-4 w-4" />
+              <FileCode2 className="h-4 w-4" />
             </Button>
           ))}
         </div>

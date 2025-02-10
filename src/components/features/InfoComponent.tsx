@@ -3,7 +3,7 @@
 import React from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Info, FileCode, FileJson } from 'lucide-react';
+import { Info, Code, Braces } from 'lucide-react';
 
 interface InfoComponentProps {
   onLoadSample: (payload: string) => void;
@@ -18,13 +18,13 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
   };
 
   return (
-    <Card className="mb-6">
-      <CardContent className="pt-6">
+    <Card className="mb-6 border border-muted bg-zinc-100/50">
+      <CardContent className="p-5">
         <div className="flex items-start gap-3">
           <Info className="h-5 w-5 text-blue-500 mt-0.5 flex-shrink-0" />
           <div className="space-y-4">
             <div className="space-y-2">
-              <p className="text-sm text-muted-foreground leading-relaxed">
+              <p className="text-xs text-muted-foreground leading-relaxed">
                 Decode and analyze Google Analytics 4 (GA4) payloads in a
                 human-readable format. This tool supports both standard
                 URL-encoded parameters and Base64-encoded payloads commonly used
@@ -42,7 +42,7 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-primary">
-                  Stape Server GTM Shopify App
+                  Stape Shopify App
                 </a>
                 .
               </p>
@@ -52,17 +52,17 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8"
+                className="h-7 text-xs text-muted-foreground"
                 onClick={() => onLoadSample(samplePayloads.encoded)}>
-                <FileCode className="mr-2 h-4 w-4" />
+                <Code className="h-4 w-4" />
                 Try Base64 Sample
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="h-8"
+                className="h-7 text-xs text-muted-foreground"
                 onClick={() => onLoadSample(samplePayloads.unencoded)}>
-                <FileJson className="mr-2 h-4 w-4" />
+                <Braces className="h-4 w-4" />
                 Try URL-encoded Sample
               </Button>
             </div>
