@@ -137,7 +137,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                               {isEcom && (
                                 <Badge
                                   variant="outline"
-                                  className="h-4 text-[10px] bg-orange-100 text-orange-400 border-orange-200 hover:bg-orange-200">
+                                  className="h-5 text-[10px] bg-green-50 text-green-700 border-green-200 hover:bg-green-100">
                                   ecom event
                                 </Badge>
                               )}
