@@ -4,14 +4,11 @@ import React from 'react';
 import { Header } from './Header';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
+import type { HistoryItem } from '@/hooks/useHistory';
 
 interface LayoutProps {
   children: React.ReactNode;
-  history: {
-    id: string;
-    timestamp: number;
-    payload: string;
-  }[];
+  history: HistoryItem[];
   onHistorySelect: (payload: string) => void;
   onHistoryDelete: (id: string) => void;
 }
@@ -31,7 +28,7 @@ export const Layout: React.FC<LayoutProps> = ({
           onSelect={onHistorySelect}
           onDelete={onHistoryDelete}
         />
-        <main className="flex-1 overflow-auto p-4 md:p-6">
+        <main className="flex-1 p-4 md:p-6 overflow-auto">
           <div className="mx-auto max-w-4xl">{children}</div>
         </main>
       </div>
