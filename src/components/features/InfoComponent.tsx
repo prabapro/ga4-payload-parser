@@ -28,8 +28,23 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
                 Decode and analyze Google Analytics 4 (GA4) payloads in a
                 human-readable format. This tool supports both standard
                 URL-encoded parameters and Base64-encoded payloads commonly used
-                by various GA4 implementations, including Stape Data Tag and
-                Stape Shopify App.
+                by various GA4 implementations, including{' '}
+                <a
+                  href="https://stape.io/solutions/data-tag-client"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-primary">
+                  Stape Data Tag
+                </a>{' '}
+                and the{' '}
+                <a
+                  href="https://apps.shopify.com/server-gtm"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="underline hover:text-primary">
+                  Stape Server GTM Shopify App
+                </a>{' '}
+                .
               </p>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 Simply paste your GA4 payload URL or query string below - this
