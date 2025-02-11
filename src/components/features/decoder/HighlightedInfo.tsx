@@ -38,16 +38,16 @@ export const HighlightedInfo: React.FC<HighlightedInfoProps> = ({ data }) => {
 
   return (
     <Card>
-      <CardContent className="grid gap-4 p-6">
+      <CardContent className="grid gap-6 p-6">
         {highlightedParams.map(({ id, icon, label, value, valueClassName }) => (
           <div key={id} className="flex items-start gap-4">
             {icon}
             <div className="space-y-1 min-w-0 flex-1">
-              <p className="text-sm font-medium text-muted-foreground">
+              <p className="text-sm font-semibold text-muted-foreground">
                 {label}
               </p>
               <p
-                className={`text-base font-semibold font-mono break-all ${valueClassName}`}>
+                className={`text-sm font-semibold font-mono break-all ${valueClassName}`}>
                 {formatValue(value)}
               </p>
             </div>
