@@ -166,7 +166,7 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                   </span>
                   <Badge
                     variant="outline"
-                    className="text-xs bg-green-100/40 border-green-100/80 text-green-600 font-thin">
+                    className="text-xs bg-green-100/40 border-green-100/80 text-green-600 font-light">
                     {Object.keys(value as Record<string, unknown>).length}{' '}
                     nested
                   </Badge>
@@ -244,14 +244,14 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex gap-3">
+          <div className="flex flex-col md:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 placeholder="Search parameters..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8 pr-8"
+                className="pl-8 pr-8 w-full"
               />
               {searchTerm && (
                 <Button
@@ -263,20 +263,22 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                 </Button>
               )}
             </div>
-            <Button
-              variant="outline"
-              onClick={handleExpandAll}
-              className="shrink-0 text-xs gap-2">
-              <ChevronDown className="h-4 w-4" />
-              Expand All
-            </Button>
-            <Button
-              variant="outline"
-              onClick={handleCollapseAll}
-              className="shrink-0 text-xs gap-2">
-              <ChevronUp className="h-4 w-4" />
-              Collapse All
-            </Button>
+            <div className="flex justify-end md:justify-center gap-3">
+              <Button
+                variant="outline"
+                onClick={handleExpandAll}
+                className="text-xs gap-2">
+                <ChevronDown className="h-4 w-4" />
+                Expand All
+              </Button>
+              <Button
+                variant="outline"
+                onClick={handleCollapseAll}
+                className="text-xs gap-2">
+                <ChevronUp className="h-4 w-4" />
+                Collapse All
+              </Button>
+            </div>
           </div>
           <ScrollArea className="h-[600px] pr-4">
             <Accordion
