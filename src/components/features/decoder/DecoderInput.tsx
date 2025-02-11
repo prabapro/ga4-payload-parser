@@ -9,10 +9,12 @@ export const DecoderInput: React.FC<DecoderInputProps> = ({
   value,
   onChange,
   onDecode,
+  onClear,
   error,
 }) => {
   const handleClear = () => {
     onChange('');
+    onClear();
   };
 
   return (

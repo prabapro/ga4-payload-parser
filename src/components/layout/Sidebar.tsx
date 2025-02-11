@@ -4,6 +4,12 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from '@/components/ui/tooltip';
+import {
   Clock,
   Trash2,
   PanelLeftClose,
@@ -39,6 +45,18 @@ const getDomainFromUrl = (url: string) => {
   }
 };
 
+const formatDateTime = (timestamp: number) => {
+  return new Date(timestamp).toLocaleString('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+    second: '2-digit',
+    hour12: false,
+  });
+};
+
 export const Sidebar: React.FC<SidebarProps> = ({
   history,
   onSelect,
@@ -62,7 +80,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
       <Button
         variant="ghost"
         size="icon"
-        className="fixed top-5 right-4 h-6 w-6 md:hidden z-50 "
+        className="fixed top-5 right-4 h-6 w-6 md:hidden z-50"
         onClick={() => setIsOpen(!isOpen)}>
         {isOpen ? (
           <PanelLeftClose className="h-4 w-4 text-muted-foreground" />
@@ -81,7 +99,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
           transform transition-all duration-300 ease-in-out
           ${isOpen ? 'translate-x-0 w-80' : '-translate-x-full md:translate-x-0 w-0 md:w-16'}
           bg-background border-r border-muted
-          overflow-hidden
         `}>
         {/* Desktop Toggle Button */}
         <Button
@@ -103,6 +120,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
           ${!isOpen && 'invisible md:visible'}
           h-full w-80
           ${!isOpen && 'md:hidden'}
+          overflow-hidden
         `}>
           <div className="px-4 py-4 h-full mt-4">
             <h2 className="text-base font-semibold mb-4 flex items-center gap-2 text-zinc-500">
@@ -149,15 +167,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                           </div>
                           <div className="flex items-center gap-2 text-xs text-muted-foreground">
                             <CalendarClock className="h-3 w-3 text-zinc-300" />
-                            {new Date(item.timestamp).toLocaleString('en-US', {
-                              year: 'numeric',
-                              month: 'short',
-                              day: 'numeric',
-                              hour: '2-digit',
-                              minute: '2-digit',
-                              second: '2-digit',
-                              hour12: false,
-                            })}
+                            {formatDateTime(item.timestamp)}
                           </div>
                         </Button>
 
@@ -177,24 +187,60 @@ export const Sidebar: React.FC<SidebarProps> = ({
           </div>
         </div>
 
-        {/* Sidebar Content - Minimized View */}
-        <div
-          className={`
-          hidden md:flex flex-col items-center pt-24 space-y-6
-          ${isOpen && 'md:hidden'}
-        `}>
-          {history.map((item) => (
-            <Button
-              key={item.id}
-              variant="ghost"
-              size="icon"
-              className="w-10 h-10"
-              onClick={() => onSelect(item.payload)}
-              title={`${item.eventName}${isEcommerceEvent(item.eventName) ? ' (ecom)' : ''}`}>
-              <FileCode2 className="h-4 w-4" />
-            </Button>
-          ))}
-        </div>
+        {/* Sidebar Content - Minimized View with Tooltips */}
+        <TooltipProvider>
+          <div
+            className={`
+              hidden md:flex flex-col items-center pt-24 space-y-6
+              ${isOpen && 'md:hidden'}
+            `}>
+            {history.map((item) => {
+              const domain = item.pageLocation
+                ? getDomainFromUrl(item.pageLocation)
+                : 'Unknown Domain';
+              const isEcom = isEcommerceEvent(item.eventName);
+
+              return (
+                <Tooltip key={item.id} delayDuration={0}>
+                  <TooltipTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      className="w-10 h-10"
+                      onClick={() => onSelect(item.payload)}>
+                      <FileCode2 className="h-4 w-4" />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipContent
+                    side="right"
+                    sideOffset={10}
+                    className="z-[60] p-3 space-y-2 bg-white border shadow-lg">
+                    <div className="flex items-center gap-2">
+                      <span className="font-medium">{item.eventName}</span>
+                      {isEcom && (
+                        <Badge
+                          variant="outline"
+                          className="h-5 text-[10px] bg-green-50 text-green-700 border-green-200">
+                          ecom event
+                        </Badge>
+                      )}
+                    </div>
+                    <div className="text-xs text-muted-foreground">
+                      <div className="flex items-center gap-2">
+                        <Globe className="h-3 w-3" />
+                        {domain}
+                      </div>
+                      <div className="flex items-center gap-2 mt-1">
+                        <CalendarClock className="h-3 w-3" />
+                        {formatDateTime(item.timestamp)}
+                      </div>
+                    </div>
+                  </TooltipContent>
+                </Tooltip>
+              );
+            })}
+          </div>
+        </TooltipProvider>
       </aside>
 
       {/* Mobile Overlay */}

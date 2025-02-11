@@ -1,3 +1,5 @@
+// tailwind.config.js
+
 import tailwindAnimate from 'tailwindcss-animate';
 import defaultTheme from 'tailwindcss/defaultTheme';
 import type { Config } from 'tailwindcss';
@@ -16,6 +18,7 @@ const config: Config = {
     extend: {
       fontFamily: {
         sans: ['Inter var', 'Inter', ...defaultTheme.fontFamily.sans],
+        mono: ['Geist Mono', ...defaultTheme.fontFamily.mono],
       },
       colors: {
         border: 'hsl(var(--border))',
