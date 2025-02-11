@@ -112,13 +112,13 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
     [matchesSearch],
   );
 
-  // Update sections and auto-expand when data or search changes
+  // Update sections and set initial expansion state
   React.useEffect(() => {
     const sections = collectSectionIds(data as Record<string, unknown>);
     setAllSections(sections);
 
     if (searchTerm) {
-      // Get all matching sections and their parent paths
+      // Get all matching sections and their parent paths for search
       const matchingSections = sections.filter((section) =>
         matchesSearch(data, section),
       );
@@ -129,6 +129,9 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
         ...new Set([...matchingSections, ...parentSections]),
       ];
       setExpandedSections(sectionsToExpand);
+    } else {
+      // If no search term, expand all sections by default
+      setExpandedSections(sections);
     }
   }, [data, searchTerm, collectSectionIds, matchesSearch]);
 
@@ -166,7 +169,7 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                   </span>
                   <Badge
                     variant="outline"
-                    className="text-xs bg-green-100/40 border-green-100/80 text-green-600 font-light">
+                    className="text-xs bg-green-100/40 border-green-100/80 text-green-500/70">
                     {Object.keys(value as Record<string, unknown>).length}{' '}
                     nested
                   </Badge>
@@ -263,7 +266,7 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                 </Button>
               )}
             </div>
-            <div className="flex justify-end md:justify-center gap-3">
+            <div className="flex justify-center md:justify-start gap-3">
               <Button
                 variant="outline"
                 onClick={handleExpandAll}
