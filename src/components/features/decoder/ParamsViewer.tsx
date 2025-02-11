@@ -1,6 +1,6 @@
 // src/components/features/decoder/ParamsViewer.tsx
 import React from 'react';
-import { Search, ChevronDown, ChevronUp } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp, X } from 'lucide-react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import {
@@ -43,7 +43,47 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
   const [expandedSections, setExpandedSections] = React.useState<string[]>([]);
   const [allSections, setAllSections] = React.useState<string[]>([]);
 
-  // Function to collect all possible section IDs
+  // Function to check if a value matches the search term
+  const matchesSearch = React.useCallback(
+    (value: unknown, path: string): boolean => {
+      if (!searchTerm) return true;
+      const termLower = searchTerm.toLowerCase();
+
+      // Check if the current path matches
+      if (path.toLowerCase().includes(termLower)) return true;
+
+      // If it's a primitive value, check if it matches
+      if (typeof value !== 'object' || value === null) {
+        return String(value).toLowerCase().includes(termLower);
+      }
+
+      // For arrays, check each element
+      if (Array.isArray(value)) {
+        return value.some((item) => matchesSearch(item, path));
+      }
+
+      // For objects, check each property
+      return Object.entries(value as Record<string, unknown>).some(
+        ([key, val]) => {
+          const fullPath = path ? `${path}.${key}` : key;
+          return matchesSearch(val, fullPath);
+        },
+      );
+    },
+    [searchTerm],
+  );
+
+  // Function to get all parent paths of a matching item
+  const getParentPaths = (path: string): string[] => {
+    const parts = path.split('.');
+    return parts.reduce((acc: string[], _, index) => {
+      if (index === 0) return acc;
+      acc.push(parts.slice(0, index).join('.'));
+      return acc;
+    }, []);
+  };
+
+  // Function to collect all section IDs and auto-expand matching sections
   const collectSectionIds = React.useCallback(
     (obj: Record<string, unknown>, path = ''): string[] => {
       return Object.entries(obj).reduce((acc: string[], [key, value]) => {
@@ -51,26 +91,46 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
 
         if (typeof value === 'object' && value !== null) {
           if (Array.isArray(value)) {
-            return [...acc, fullPath];
+            // Include array paths and check if they match search
+            const shouldInclude = matchesSearch(value, fullPath);
+            return shouldInclude ? [...acc, fullPath] : acc;
           } else {
-            return [
-              ...acc,
+            // Include object paths and their nested paths if they match search
+            const nestedPaths = collectSectionIds(
+              value as Record<string, unknown>,
               fullPath,
-              ...collectSectionIds(value as Record<string, unknown>, fullPath),
-            ];
+            );
+            const shouldInclude = matchesSearch(value, fullPath);
+            return shouldInclude
+              ? [...acc, fullPath, ...nestedPaths]
+              : [...acc, ...nestedPaths];
           }
         }
         return acc;
       }, []);
     },
-    [],
+    [matchesSearch],
   );
 
-  // Initialize allSections when data changes
+  // Update sections and auto-expand when data or search changes
   React.useEffect(() => {
-    const sections = collectSectionIds(data);
+    const sections = collectSectionIds(data as Record<string, unknown>);
     setAllSections(sections);
-  }, [data, collectSectionIds]);
+
+    if (searchTerm) {
+      // Get all matching sections and their parent paths
+      const matchingSections = sections.filter((section) =>
+        matchesSearch(data, section),
+      );
+      const parentSections = matchingSections.flatMap(getParentPaths);
+
+      // Combine and deduplicate sections to expand
+      const sectionsToExpand = [
+        ...new Set([...matchingSections, ...parentSections]),
+      ];
+      setExpandedSections(sectionsToExpand);
+    }
+  }, [data, searchTerm, collectSectionIds, matchesSearch]);
 
   const handleExpandAll = () => {
     setExpandedSections(allSections);
@@ -85,13 +145,9 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
     path = '',
   ): React.ReactNode => {
     return Object.entries(obj)
-      .filter(([key]) => {
+      .filter(([key, value]) => {
         const fullPath = path ? `${path}.${key}` : key;
-        if (!searchTerm) return true;
-        return (
-          fullPath.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          String(obj[key]).toLowerCase().includes(searchTerm.toLowerCase())
-        );
+        return matchesSearch(value, fullPath);
       })
       .map(([key, value]) => {
         const fullPath = path ? `${path}.${key}` : key;
@@ -141,23 +197,27 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
               </AccordionTrigger>
               <AccordionContent>
                 <div className="pl-4 space-y-2">
-                  {value.map((item, index) => (
-                    <div key={index} className="flex items-start gap-2">
-                      <Badge variant="outline" className="mt-1 text-xs">
-                        {index}
-                      </Badge>
-                      {typeof item === 'object' && item !== null ? (
-                        <div className="flex-1">
-                          {renderObjectContent(
-                            item as Record<string, unknown>,
-                            `${fullPath}[${index}]`,
-                          )}
-                        </div>
-                      ) : (
-                        <ParameterValue value={item} />
-                      )}
-                    </div>
-                  ))}
+                  {value
+                    .filter((item, index) =>
+                      matchesSearch(item, `${fullPath}[${index}]`),
+                    )
+                    .map((item, index) => (
+                      <div key={index} className="flex items-start gap-2">
+                        <Badge variant="outline" className="mt-1 text-xs">
+                          {index}
+                        </Badge>
+                        {typeof item === 'object' && item !== null ? (
+                          <div className="flex-1">
+                            {renderObjectContent(
+                              item as Record<string, unknown>,
+                              `${fullPath}[${index}]`,
+                            )}
+                          </div>
+                        ) : (
+                          <ParameterValue value={item} />
+                        )}
+                      </div>
+                    ))}
                 </div>
               </AccordionContent>
             </AccordionItem>
@@ -191,8 +251,17 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                 placeholder="Search parameters..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-8"
+                className="pl-8 pr-8"
               />
+              {searchTerm && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="absolute right-1 top-1 h-7 w-7 hover:bg-transparent"
+                  onClick={() => setSearchTerm('')}>
+                  <X className="h-4 w-4 text-muted-foreground" />
+                </Button>
+              )}
             </div>
             <Button
               variant="outline"
@@ -215,7 +284,7 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
               value={expandedSections}
               onValueChange={setExpandedSections}
               className="w-full">
-              {renderObjectContent(data)}
+              {renderObjectContent(data as Record<string, unknown>)}
             </Accordion>
           </ScrollArea>
         </div>
