@@ -1,7 +1,8 @@
 // src/components/features/decoder/ParamsViewer.tsx
 import React from 'react';
-import { Search } from 'lucide-react';
+import { Search, ChevronDown, ChevronUp } from 'lucide-react';
 import { Input } from '@/components/ui/input';
+import { Button } from '@/components/ui/button';
 import {
   Accordion,
   AccordionContent,
@@ -40,6 +41,44 @@ const ParameterValue: React.FC<{ value: unknown }> = ({ value }) => {
 export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
   const [searchTerm, setSearchTerm] = React.useState('');
   const [expandedSections, setExpandedSections] = React.useState<string[]>([]);
+  const [allSections, setAllSections] = React.useState<string[]>([]);
+
+  // Function to collect all possible section IDs
+  const collectSectionIds = React.useCallback(
+    (obj: Record<string, unknown>, path = ''): string[] => {
+      return Object.entries(obj).reduce((acc: string[], [key, value]) => {
+        const fullPath = path ? `${path}.${key}` : key;
+
+        if (typeof value === 'object' && value !== null) {
+          if (Array.isArray(value)) {
+            return [...acc, fullPath];
+          } else {
+            return [
+              ...acc,
+              fullPath,
+              ...collectSectionIds(value as Record<string, unknown>, fullPath),
+            ];
+          }
+        }
+        return acc;
+      }, []);
+    },
+    [],
+  );
+
+  // Initialize allSections when data changes
+  React.useEffect(() => {
+    const sections = collectSectionIds(data);
+    setAllSections(sections);
+  }, [data, collectSectionIds]);
+
+  const handleExpandAll = () => {
+    setExpandedSections(allSections);
+  };
+
+  const handleCollapseAll = () => {
+    setExpandedSections([]);
+  };
 
   const renderObjectContent = (
     obj: Record<string, unknown>,
@@ -65,12 +104,20 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
           return (
             <AccordionItem value={fullPath} key={fullPath}>
               <AccordionTrigger className="hover:no-underline">
-                <span className="font-semibold text-sm font-mono text-red-500">
-                  {key}
-                </span>
+                <div className="flex items-center gap-2">
+                  <span className="font-semibold text-sm font-mono text-red-500">
+                    {key}
+                  </span>
+                  <Badge
+                    variant="outline"
+                    className="text-xs bg-green-100/40 border-green-100/80 text-green-600 font-thin">
+                    {Object.keys(value as Record<string, unknown>).length}{' '}
+                    nested
+                  </Badge>
+                </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="pl-4 border-l">
+                <div className="pl-4">
                   {renderObjectContent(
                     value as Record<string, unknown>,
                     fullPath,
@@ -93,7 +140,7 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
                 </div>
               </AccordionTrigger>
               <AccordionContent>
-                <div className="pl-4 space-y-2 border-l">
+                <div className="pl-4 space-y-2">
                   {value.map((item, index) => (
                     <div key={index} className="flex items-start gap-2">
                       <Badge variant="outline" className="mt-1 text-xs">
@@ -137,14 +184,30 @@ export const ParamsViewer: React.FC<ParamsViewerProps> = ({ data }) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="relative">
-            <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search parameters..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-8"
-            />
+          <div className="flex gap-3">
+            <div className="relative flex-1">
+              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search parameters..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-8"
+              />
+            </div>
+            <Button
+              variant="outline"
+              onClick={handleExpandAll}
+              className="shrink-0 text-xs gap-2">
+              <ChevronDown className="h-4 w-4" />
+              Expand All
+            </Button>
+            <Button
+              variant="outline"
+              onClick={handleCollapseAll}
+              className="shrink-0 text-xs gap-2">
+              <ChevronUp className="h-4 w-4" />
+              Collapse All
+            </Button>
           </div>
           <ScrollArea className="h-[600px] pr-4">
             <Accordion
