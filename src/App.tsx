@@ -1,6 +1,6 @@
 // src/App.tsx
 import React, { useState } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Layout } from '@/components/layout/Layout';
 import { useDecoder } from '@/hooks/useDecoder';
 import { useHistory } from '@/hooks/useHistory';
@@ -45,11 +45,8 @@ const App: React.FC = () => {
       onHistoryDelete={removeFromHistory}>
       <InfoComponent onLoadSample={handleLoadSample} />
       <Card>
-        <CardHeader>
-          <CardTitle>GA4 Payload</CardTitle>
-        </CardHeader>
         <CardContent>
-          <div className="space-y-6">
+          <div className="space-y-6 pt-6">
             <DecoderInput
               value={input}
               onChange={setInput}
