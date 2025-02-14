@@ -25,10 +25,10 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
           <div className="space-y-4">
             <div className="space-y-2">
               <p className="text-xs text-muted-foreground leading-relaxed">
-                Decode and analyze Google Analytics 4 (GA4) payloads in a
-                human-readable format. This tool supports both standard
-                URL-encoded parameters and Base64-encoded payloads commonly used
-                by various GA4 implementations, including{' '}
+                Easily decode and analyze Google Analytics 4 (GA4) payloads in a
+                readable format. This tool supports both standard URL-encoded
+                parameters and Base64-encoded payloads, including those from
+                tools like{' '}
                 <a
                   href="https://stape.io/solutions/data-tag-client"
                   target="_blank"
@@ -38,11 +38,11 @@ const InfoComponent: React.FC<InfoComponentProps> = ({ onLoadSample }) => {
                 </a>{' '}
                 and the{' '}
                 <a
-                  href="https://apps.shopify.com/server-gtm"
+                  href="https://help.stape.io/hc/en-us/articles/22270761163165-What-is-GA4-ad-block-bypass-in-Custom-Loader-and-how-does-it-work"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="underline hover:text-primary">
-                  Stape Shopify App
+                  Stape's GA4 ad block bypass Powerup
                 </a>
                 .
               </p>
